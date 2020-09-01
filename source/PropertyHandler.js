@@ -1,6 +1,6 @@
 'use strict';
 /** 
- * @author GA graang@gmail.com
+ * @author GA graangh@gmail.com
  */
  
 /*\
