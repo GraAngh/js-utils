@@ -1,10 +1,12 @@
 
 # Установка
+
 |production|dev|
 |:---|:---|
 |`npm i @graangh/utils`| `npm i -D @graangh/utils`|
 
 # Использование
+
 ```js
 // Node.js
 const {Type, PropertyHandler} = require('@graangh/utils');
@@ -20,8 +22,6 @@ const {Type, PropertyHandler} = require('@graangh/utils');
 
 Объект для работы с типом произвольного значения.
 
-> Значение типа представляется строкой  (*прим.* 'array').
-
 ### Константы
 ```js 
 Type.UNDEFINED = 'undefined'
@@ -34,6 +34,7 @@ Type.FUNCTION  = 'function'
 Type.OBJECT    = 'object'
 Type.Symbol    = 'symbol'
 ```
+
 ### Методы
  - **`of`**_`(value)`_ - определение типа для переданного значения 
 	
@@ -43,11 +44,11 @@ Type.Symbol    = 'symbol'
 ```js
 const { Type } = require('@graangh/utils');
 	
-console.log( Type.of('hello world') ); // Выведет <string> String 
-console.log( Type.of(0) );             // Выведет <string> Number
+console.log( Type.of('hello world') ); // Выведет <string> string 
+console.log( Type.of(0) );             // Выведет <string> number
 console.log( Type.of(undefined) );     // Выведет <string> undefined
 console.log( Type.of(null) );          // Выведет <string> null
-console.log( Type.of(Object.create(null)) ); // Выведет <boolean> false
+console.log( Type.of(Object.create(null)) ); // Выведет <string> object
 console.log( Type.of() );              // Выведет <boolean> false
 ``` 
 
@@ -82,18 +83,19 @@ description = {
 
 ```
 descriptor = {
-	[default: <any>] 
+	default: <any>
 	[type: <String|Array> of Type formatted like]
 	[extra: <Function>]
 }
 ```
-*descriptor*.**default** — значение по умолчанию. Применяется если исходное значение не проходит проверку.
 
- *descriptor*.**type** — тип переменной. Указывается в формате объекта [Type](#type-section-anchor)
+|имя свойства `descriptor`|обязательное|описание|
+|:---|:---:|---|
+|`default`|&#9989;|Значение по умолчанию. Применяется если исходное значение не проходит проверку|
+|`type`||Тип переменной. Указывается в формате объекта [Type](#type-section-anchor)|
+|`extra`||Дополнительная функция проверки. `function(value)`, где *value* - исходное значение. Функция должна вернуть значение, которое рассматривается как ***true*** или ***false***  |
 
- *descriptor*.**extra** — дополнительная функция проверки. `function(value)`, где *value* - исходное значение. Функция должна вернуть значение, которое рассматривается как ***true*** или ***false***  
-
-Свойства *descriptor* не являются обязательными.
+Все свойства *descriptor* не являются обязательными.
 
 ### Пример *Description*:
 
@@ -111,6 +113,7 @@ const description = {
 	},
 	'property-three' : {
 		default: null,
+		// список для множества типов
 		type: [Type.NULL, Type.ARRAY]
 	},
 	'property-four' : {
@@ -131,5 +134,5 @@ const description = {
 Можно просто передать _description_ конструктору и обойтись без вызова данного метода.
 
 
-[function-name ref-en]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name#JavaScript_compressors_and_minifiers
-[function-name ref-ru]: https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Function/name#JavaScript_compressors_and_minifiers
+[function.name article-en]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name#JavaScript_compressors_and_minifiers
+[function.name article-ru]: https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Function/name#JavaScript_compressors_and_minifiers
