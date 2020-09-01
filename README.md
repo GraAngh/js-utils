@@ -1,58 +1,104 @@
 
-# Install
-`npm install @graangh/utils`
+# Установка
+|production|dev|
+|:---|:---|
+|`npm i @graangh/utils`| `npm i -D @graangh/utils`|
 
-# Usage
-
-## Node.js
-
+# Использование
 ```js
+// Node.js
 const {Type, PropertyHandler} = require('@graangh/utils');
 ```
 
-# Documentation
+# Документация
+*ДОСТУПНЫЕ ИНСТРУМЕНТЫ*:
 
-##  _Type_
-Объект для работы с типом некоторого значения
+- [Type](#type-section-anchor)  — Объект для работы с типом произвольного значения
+- [PropertyHandler](#propertyhandler-section-anchor) - Класс для обработки свойств объекта
 
-### Constants
+## <a id="type-section-anchor">*Type*</a> 
+
+Объект для работы с типом произвольного значения.
+
+> Значение типа представляется строкой  (*прим.* 'array').
+
+### Константы
 ```js 
 Type.UNDEFINED = 'undefined'
 Type.NULL      = 'null'
-Type.BOOLEAN   = 'Boolean'
-Type.NUMBER    = 'Number'
-Type.STRING    = 'String'
-Type.ARRAY     = 'Array'
-Type.FUNCTION  = 'Function'
-Type.OBJECT    = 'Object'
+Type.BOOLEAN   = 'boolean'
+Type.NUMBER    = 'number'
+Type.STRING    = 'string'
+Type.ARRAY     = 'array'
+Type.FUNCTION  = 'function'
+Type.OBJECT    = 'object'
+Type.Symbol    = 'symbol'
 ```
-### Methods
- - **of** (_value_) - определение типа для переданного значения 
-	 > Значение возвращается в виде предоставленных констант выше.
-	 > Для объекта __без прототипа__ вернет *Boolean(FALSE)*
-	```js
-	const { Type } = require('@graangh/utils');
+### Методы
+ - **`of`**_`(value)`_ - определение типа для переданного значения 
 	
-	console.log( Type.of('hello world') ); // Выведет <string> String 
-	console.log( Type.of(0) );             // Выведет <string> Number
-	console.log( Type.of(undefined) );     // Выведет <string> undefined
-	console.log( Type.of(null) );          // Выведет <string> null
-	console.log( Type.of(Object.create(null)) ); // Выведет <boolean> false
-	console.log( Type.of() );              // Выведет <boolean> false
-	``` 
-## _PropertyHandler_
-Класс для обработки свойств объекта
+ > Значение возвращается в виде предоставленных констант выше.
+ > Для объекта __без прототипа__ вернет *Boolean(FALSE)*
+	 
 ```js
-// Создание экземпляра
-const ph = new PropertyHandler(targetObj[, descriptionObj]);
+const { Type } = require('@graangh/utils');
+	
+console.log( Type.of('hello world') ); // Выведет <string> String 
+console.log( Type.of(0) );             // Выведет <string> Number
+console.log( Type.of(undefined) );     // Выведет <string> undefined
+console.log( Type.of(null) );          // Выведет <string> null
+console.log( Type.of(Object.create(null)) ); // Выведет <boolean> false
+console.log( Type.of() );              // Выведет <boolean> false
+``` 
+
+## <a id="propertyhandler-section-anchor">*PropertyHandler*</a> 
+
+Класс для обработки свойств объекта
+
+```js
+/*
+ * Создание экземпляра
+ * 
+ *      target - required
+ * description - optional
+ */
+const ph = new PropertyHandler(target, description);
 ```
 
-### Methods
-- **describe** (_descriptionObj_)  - добавление описания свойств объекта
+### Методы
+
+- **`describe`**_`(description)`_ — добавление описания свойств объекта
+
+*description* — это объект, где имя свойства совпадает с именем свойства объекта *target*, переданным в конструктор **PropertyHandler**.
+
+```
+description = {
+	[targetPName: descriptor]
+	[...]
+};
+```
+
+ Значением для каждого свойства выступает условный объект *descriptor* (*перечислен исчерпывающий список доступных свойств*): 
+
+```
+descriptor = {
+	[default: <any>] 
+	[type: <String|Array> of Type formatted like]
+	[extra: <Function>]
+}
+```
+*descriptor*.**default** — значение по умолчанию. Применяется если исходное значение не проходит проверку.
+
+ *descriptor*.**type** — тип переменной. Указывается в формате объекта [Type](#type-section-anchor)
+
+ *descriptor*.**extra** — дополнительная функция проверки. `function(value)`, где *value* - исходное значение. Функция должна вернуть значение, которое рассматривается как ***true*** или ***false***  
+
+Свойства *descriptor* не являются обязательными.
+
+### Пример *Description*:
 
 ```js
 const description = {
-	// Исчерпывающий список полей доступных для описания
 	'property-one' : {
 		default: 1,
 		type: Type.NUMBER,
@@ -63,9 +109,27 @@ const description = {
 		default: 'hello',
 		type: Type.STRING
 	},
-	'property-three': {}
+	'property-three' : {
+		default: null,
+		type: [Type.NULL, Type.ARRAY]
+	},
+	'property-four' : {
+		default: new Date,
+		type: Type.OBJECT,
+		extra: v => v instanceof Date
+	},
+	// В таком случае default = undefined
+	// тип значения любой
+	// проверка проведется только по extra 
+	'property-five' : {
+		extra: v => v instanceof Date
+	}
 };
 ```
 
 После вызова _**describe**_() и происходит обработка целевого объекта. 
-Можно просто передать _descriptionObj_ конструктору и обойтись без вызова данного метода.
+Можно просто передать _description_ конструктору и обойтись без вызова данного метода.
+
+
+[function-name ref-en]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name#JavaScript_compressors_and_minifiers
+[function-name ref-ru]: https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Function/name#JavaScript_compressors_and_minifiers
