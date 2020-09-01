@@ -31,7 +31,7 @@ const Type = {
         if (!value.__proto__) {
             return false;
         }
-        return value.__proto__.constructor.name; 
+        return value.__proto__.constructor.name.toLowerCase(); 
     }
 };
 
